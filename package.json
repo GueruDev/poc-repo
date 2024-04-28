@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "sass": "sass --watch src/App.scss src/App.css",
     "dev": "rsbuild dev --open",
     "build": "rsbuild build",
     "preview": "rsbuild preview"
