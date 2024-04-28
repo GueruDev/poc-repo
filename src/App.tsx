@@ -1,7 +1,8 @@
 import './App.css';
+import React, { FC, FunctionComponent, Suspense, lazy, useEffect, useState} from 'react';
 import { BrowserRouter as Router, Routes, Route, Link} from 'react-router-dom';
-import { Page01 } from './Page01';
-import { Page02 } from './Page02';
+const Page01 = lazy(() => import('./Page01'));
+const Page02 = lazy(() => import('./Page02'));
 const Home = () => {
   return (
     <div className="content">
@@ -10,6 +11,21 @@ const Home = () => {
     </div>
   );
 }
+const DelayedComponent = ({ children }: any) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 1000); // 1 second delay
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return isLoaded ? children : <div className='content'>Loading...</div>;
+};
+
+
 const App = () => {
   return (
     <Router>
@@ -26,11 +42,13 @@ const App = () => {
           </li>
         </ul>
       </nav>
-      <Routes>
-        <Route path="/page01" element={<Page01 />} />
-        <Route path="/page02" element={<Page02 />} /> 
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <Suspense>
+        <Routes>
+          <Route path="/page01" element={<DelayedComponent><Page01 /></DelayedComponent>} />
+          <Route path="/page02" element={<DelayedComponent><Page02 /></DelayedComponent>} /> 
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Suspense>
     </Router>
   );
 };
